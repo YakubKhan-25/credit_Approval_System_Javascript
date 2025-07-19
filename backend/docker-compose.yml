@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  backend:
+    build: .
+    ports:
+      - "3005:3000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/your-db-name
+    volumes:
+      - .:/usr/src/app
+    networks:
+      - creditapproval
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - creditapproval
+
+volumes:
+  mongo_data:
+
+networks:
+  creditapproval:
+    driver: bridge
+
