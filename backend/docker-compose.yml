@@ -1,31 +1,34 @@
 version: '3.8'
-services:
-  backend:
-    build: .
-    ports:
-      - "3005:3000"
-    depends_on:
-      - mongo
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/your-db-name
-    volumes:
-      - .:/usr/src/app
-    networks:
-      - creditapproval
 
-  mongo:
-    image: mongo:latest
+services:
+  mongo_db:
+    image: mongo:6
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
     networks:
-      - creditapproval
+      - creditapproval_js
+
+  backend_js:
+    build: .
+    command: >
+      sh -c "npm install && npm start"
+    volumes:
+      - .:/usr/src/app
+    working_dir: "/usr/src/app"
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://mongo_db:27017/creditapprovalmono
+    depends_on:
+      - mongo_db
+    networks:
+      - creditapproval_js
 
 volumes:
   mongo_data:
 
 networks:
-  creditapproval:
+  creditapproval_js:
     driver: bridge
-
